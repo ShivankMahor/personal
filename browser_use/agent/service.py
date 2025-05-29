@@ -1341,15 +1341,18 @@ class Agent(Generic[Context]):
 
 				# Check if we should stop due to too many failures
 				if self.state.consecutive_failures >= self.settings.max_failures:
-					logger.error(f'❌ Stopping due to {self.settings.max_failures} consecutive failures')
-					agent_run_error = f'Stopped due to {self.settings.max_failures} consecutive failures'
-					break
+					logger.error(f' Error ❌: max Consecutive failes: {self.settings.max_failures} reached, this is just a warning')
+					# logger.error(f'❌ Stopping due to {self.settings.max_failures} consecutive failures')
+					# agent_run_error = f'Stopped due to {self.settings.max_failures} consecutive failures'
+					# break
 
 				# Check control flags before each step
 				if self.state.stopped:
-					logger.info('🛑 Agent stopped')
-					agent_run_error = 'Agent stopped programmatically'
-					break
+					# logger.info('🛑 Agent stopped')
+					# agent_run_error = 'Agent stopped programmatically'
+					# break
+					logger.info('Agent stop flag is set to true, changing it back to false so agent dose not stop')
+					self.state.stopped = False
 
 				while self.state.paused:
 					await asyncio.sleep(0.2)  # Small delay to prevent CPU spinning
@@ -1873,3 +1876,4 @@ class Agent(Generic[Context]):
 		# Update done action model too
 		self.DoneActionModel = self.controller.registry.create_action_model(include_actions=['done'], page=page)
 		self.DoneAgentOutput = AgentOutput.type_with_custom_actions(self.DoneActionModel)
+ 
